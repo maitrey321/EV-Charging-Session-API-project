@@ -28,6 +28,19 @@ return res.status(400).json({
 message:"Meter reading required"
 
 });}
+const existingSession = await Session.findOne({sessionId});
+
+if(existingSession){
+
+return res.status(400).json({
+
+message:"Session already exists",
+
+sessionId:sessionId,
+
+hint:"Use a different Session ID"
+
+});}
 
 const session= await Session.create({sessionId,meterReadings:[meterReading]});
 
@@ -61,7 +74,15 @@ return res.status(400).json({
 message:"Session ID is required"
 
 });}
+if(meterReading == null){
 
+return res.status(400).json({
+
+message:"Meter reading required",
+
+requiredField:"meterReading"
+
+});}
 if(meterReading<0){
 
 return res.status(400).json({
@@ -76,22 +97,35 @@ if(!session){
 
 return res.status(404).json({
 
-message:"Session not found"
+message:"Session not found",
+
+requestedSessionId:sessionId,
+
+hint:"Please check session ID or start a new session",
+
+status:"failed"
 
 });}
 
 const lastReading= session.meterReadings[session.meterReadings.length-1];
 
-if(meterReading<=lastReading){
+if(meterReading <= lastReading){
 
 return res.status(400).json({
 
-message:"Reading must increase"
+message:"Reading must increase",
+
+currentReading:lastReading,
+
+enteredReading:meterReading,
+
+hint:`Reading should be greater than ${lastReading}`
 
 });}
 
 session.meterReadings.push(meterReading);
 await session.save();
+
 res.status(200).json({
 
 message:"Reading Updated",
@@ -115,7 +149,16 @@ try{
 
 const {sessionId}=req.body;
 if(!sessionId){
+    
+if(session.stopTimestamp){
 
+return res.status(400).json({
+
+message:"Session already stopped",
+
+sessionId:sessionId
+
+});}
 return res.status(400).json({
 
 message:"Session ID is required"
@@ -136,7 +179,15 @@ await session.save();
 
 res.status(200).json({
 
-message:"Session stopped", session
+message:"Session stopped successfully",
+
+sessionId:session.sessionId,
+
+startTime:session.startTimestamp,
+
+stopTime:session.stopTimestamp,
+
+totalReadings:session.meterReadings.length
 
 });}
 
@@ -163,8 +214,13 @@ message:"Session not found"
 
 });}
 
-res.status(200).json(session);
+res.status(200).json({
 
+message:"Session data found",
+
+session
+
+});
 }
 
 catch(error){
