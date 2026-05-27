@@ -136,7 +136,7 @@ await session.save();
 
 res.status(200).json({
 
-message:"Session stopped"
+message:"Session stopped", session
 
 });}
 
