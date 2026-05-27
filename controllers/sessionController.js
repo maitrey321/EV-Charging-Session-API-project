@@ -5,12 +5,27 @@ const startSession = async(req,res)=>{
 try{
 
 const {sessionId,meterReading}=req.body;
-
-if(!sessionId || meterReading<0){
+if(!sessionId){
 
 return res.status(400).json({
 
-message:"Invalid input"
+message:"Session ID is required"
+
+});}
+
+if(meterReading<0){
+
+return res.status(400).json({
+
+message:"Meter reading cannot be negative"
+
+});}
+
+if(meterReading == null){
+
+return res.status(400).json({
+
+message:"Meter reading required"
 
 });}
 
@@ -38,6 +53,22 @@ const updateReading=async(req,res)=>{
 try{
 
 const {sessionId,meterReading}=req.body;
+
+if(!sessionId){
+
+return res.status(400).json({
+
+message:"Session ID is required"
+
+});}
+
+if(meterReading<0){
+
+return res.status(400).json({
+
+message:"Meter reading cannot be negative"
+
+});}
 
 const session=await Session.findOne({sessionId});
 
@@ -83,6 +114,13 @@ const stopSession=async(req,res)=>{
 try{
 
 const {sessionId}=req.body;
+if(!sessionId){
+
+return res.status(400).json({
+
+message:"Session ID is required"
+
+});}
 const session=await Session.findOne({sessionId});
 
 if(!session){
