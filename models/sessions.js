@@ -14,7 +14,7 @@ const sessionSchema = new mongoose.Schema({
     },
     meterReadings:{
         type:[Number]
-    }
+    },
 });
 
 module.exports = mongoose.model("Session",sessionSchema);

@@ -48,7 +48,11 @@ res.status(201).json({
 
 message:"Session Started",
 
-session
+session:{
+sessionId:session.sessionId,
+meterReadings:session.meterReadings,
+startTimestamp:session.startTimestamp
+}
 
 });}
 
@@ -148,23 +152,16 @@ const stopSession=async(req,res)=>{
 try{
 
 const {sessionId}=req.body;
+
 if(!sessionId){
-    
-if(session.stopTimestamp){
 
-return res.status(400).json({
-
-message:"Session already stopped",
-
-sessionId:sessionId
-
-});}
 return res.status(400).json({
 
 message:"Session ID is required"
 
 });}
-const session=await Session.findOne({sessionId});
+
+const session = await Session.findOne({sessionId});
 
 if(!session){
 
@@ -174,7 +171,17 @@ message:"Session not found"
 
 });}
 
+if(session.stopTimestamp){
+
+return res.status(400).json({
+
+message:"Session already stopped",
+
+sessionId:sessionId
+
+});}
 session.stopTimestamp=Date.now();
+
 await session.save();
 
 res.status(200).json({
@@ -189,7 +196,8 @@ stopTime:session.stopTimestamp,
 
 totalReadings:session.meterReadings.length
 
-});}
+});
+}
 
 catch(error){
 
@@ -218,8 +226,12 @@ res.status(200).json({
 
 message:"Session data found",
 
-session
-
+session:{
+sessionId:session.sessionId,
+meterReadings:session.meterReadings,
+startTimestamp:session.startTimestamp,
+stopTimestamp:session.stopTimestamp
+}
 });
 }
 
