@@ -1,6 +1,7 @@
 import { useState } from "react";
 
 function App() {
+  const API_URL = "https://ev-charging-api-vl4q.onrender.com";
   //HTTP status codes
   const [startStatus, setStartStatus] = useState(null);
   const [updateStatus, setUpdateStatus] = useState(null);
@@ -26,7 +27,7 @@ function App() {
   const startSessions = async () => {
     try {
       const response = await fetch(
-        "http://localhost:5000/api/session/start",
+        `${API_URL}/api/session/start`,
         {
           method: "POST",
           headers: {
@@ -53,7 +54,7 @@ function App() {
   const updateReading = async () => {
     try {
       const response = await fetch(
-        "http://localhost:5000/api/session/update",
+        `${API_URL}/api/session/update`,
         {
           method: "PUT", headers: {
             "Content-Type": "application/json"
@@ -79,7 +80,7 @@ function App() {
   const stopSession = async () => {
     try {
       const response = await fetch(
-        "http://localhost:5000/api/session/stop",
+        `${API_URL}/api/session/stop`,
         {
           method: "PUT",
           headers: {
@@ -105,7 +106,7 @@ function App() {
   const getSessionDetails = async () => {
     try {
       const response = await fetch(
-        `http://localhost:5000/api/session/${searchSessionId}`
+         `${API_URL}/api/session/${searchSessionId}`
       );
       console.log("Status Code:", response.status);
       console.log("Is Success:", response.ok);
@@ -211,35 +212,35 @@ function App() {
             <p> Stop Time: {stopData.stopTime}</p>
             <p>  Total Readings: {stopData.totalReadings}</p>
           </div>
-           )}
-         </div>
+        )}
+      </div>
 
       <hr />
 
       {/* ========view session========== */}
       <div className="section">
-      <h2>View Session Details</h2>
-      <input
-        type="text"
-        placeholder="Session ID"
-        value={searchSessionId}
-        onChange={(e) => setSearchSessionId(e.target.value)} />
+        <h2>View Session Details</h2>
+        <input
+          type="text"
+          placeholder="Session ID"
+          value={searchSessionId}
+          onChange={(e) => setSearchSessionId(e.target.value)} />
 
-      <br /><br />
+        <br /><br />
 
-      <button onClick={getSessionDetails}>
-        Get Details
-      </button>
-      {sessionDetails && sessionDetails.session && (
-        <div className="result-box">
-          <h3>Status Code: {getStatus}</h3>
-          <h3>{sessionDetails.message}</h3>
-          <p> Session ID:  {sessionDetails.session.sessionId} </p>
-          <p> Meter Readings: {sessionDetails.session.meterReadings.join(", ")}  </p>
-          <p> Start Time:  {sessionDetails.session.startTimestamp} </p>
-          <p> Stop Time: {sessionDetails.session.stopTimestamp || "Not Stopped Yet"}</p>
-        </div>
-      )}
+        <button onClick={getSessionDetails}>
+          Get Details
+        </button>
+        {sessionDetails && sessionDetails.session && (
+          <div className="result-box">
+            <h3>Status Code: {getStatus}</h3>
+            <h3>{sessionDetails.message}</h3>
+            <p> Session ID:  {sessionDetails.session.sessionId} </p>
+            <p> Meter Readings: {sessionDetails.session.meterReadings.join(", ")}  </p>
+            <p> Start Time:  {sessionDetails.session.startTimestamp} </p>
+            <p> Stop Time: {sessionDetails.session.stopTimestamp || "Not Stopped Yet"}</p>
+          </div>
+        )}
       </div>
     </div>
   );
