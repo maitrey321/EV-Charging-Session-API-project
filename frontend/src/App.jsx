@@ -8,7 +8,10 @@ function App() {
   const [stopStatus, setStopStatus] = useState(null);
   const [getStatus, setGetStatus] = useState(null);
   //Error 
-  const [error, setError] = useState("");
+  const [startError, setStartError] = useState("");
+  const [updateError, setUpdateError] = useState("");
+  const [stopError, setStopError] = useState("");
+  const [getError, setGetError] = useState("");
   // get data 
   const [startData, setStartData] = useState(null);
   const [updateData, setUpdateData] = useState(null);
@@ -43,14 +46,14 @@ function App() {
       console.log("Is Success:", response.ok);
       const data = await response.json();
       if (!response.ok) {
-        setError(data.message);
+        setStartError(data.message);
         setStartData(null);
         setUpdateData(null);
         setStopData(null);
         setSessionDetails(null);
         return;
       }
-      setError("");
+      setStartError("");
       setStartStatus(response.status);
       setStartData(data);
       setSessionId("");
@@ -78,14 +81,14 @@ function App() {
       console.log("Is Success:", response.ok);
       const data = await response.json();
       if (!response.ok) {
-        setError(data.message);
+        setUpdateError(data.message);
         setStartData(null);
         setUpdateData(null);
         setStopData(null);
         setSessionDetails(null);
         return;
       }
-      setError("");
+      setUpdateError("");
       setUpdateStatus(response.status);
       setUpdateData(data);
       setUpdateSessionId("");
@@ -114,14 +117,14 @@ function App() {
       console.log("Is Success:", response.ok);
       const data = await response.json();
       if (!response.ok) {
-        setError(data.message);
+        setStopError(data.message);
         setStartData(null);
         setUpdateData(null);
         setStopData(null);
         setSessionDetails(null);
         return;
       }
-      setError("");
+      setStopError("");
       setStopStatus(response.status);
       setStopData(data);
       setStopSessionId("");
@@ -141,14 +144,14 @@ function App() {
       console.log("Is Success:", response.ok);
       const data = await response.json();
       if (!response.ok) {
-        setError(data.message);
+        setGetError(data.message);
         setStartData(null);
         setUpdateData(null);
         setStopData(null);
         setSessionDetails(null);
         return;
       }
-      setError("");
+      setGetError("");
       setGetStatus(response.status);
       console.log(data);
       setSessionDetails(data);
@@ -160,10 +163,7 @@ function App() {
   return (
     <div>
       <h1>EV Charging Session Management</h1>
-      {/* Error message box */}
-      {error && (
-        <div className="error-box"> {error} </div>
-      )}
+
       {/*======== start session======== */}
       <div className="section">
         <h2>Start Session</h2>
@@ -184,13 +184,20 @@ function App() {
         <br /><br />
 
         <button onClick={startSessions}> Start Session </button>
+        {/* Error message box */}
+        {startError && (
+          <div className="error-box">
+            {startError}
+          </div>
+        )}
         {startData && (
           <div className="result-box">
             <h3>Status Code: {startStatus}</h3>
             <h3>{startData.message}</h3>
             <p>Session ID: {startData.session.sessionId}</p>
             <p> Meter Reading: {startData.session.meterReadings.join(", ")} </p>
-            <p> Start Time: {startData.session.startTimestamp} </p>
+            <p> Start Date:{new Date(startData.session.startTimestamp).toLocaleDateString()}</p>
+            <p> Start Time: {new Date(startData.session.startTimestamp).toLocaleTimeString()}</p>
           </div>
         )}
       </div>
@@ -217,6 +224,12 @@ function App() {
         <br /><br />
 
         <button onClick={updateReading}> Update Reading  </button>
+        {/* Error message box */}
+        {updateError && (
+          <div className="error-box">
+            {updateError}
+          </div>
+        )}
         {updateData && (
           <div className="result-box">
             <h3>Status Code: {updateStatus}</h3>
@@ -241,16 +254,22 @@ function App() {
 
         <br /><br />
 
-        <button onClick={stopSession}>
-          Stop Session
-        </button>
+        <button onClick={stopSession}>  Stop Session </button>
+        {/* Error message box */}
+        {stopError && (
+          <div className="error-box">
+            {stopError}
+          </div>
+        )}
         {stopData && (
           <div className="result-box">
             <h3>Status Code: {stopStatus}</h3>
             <h3>{stopData.message}</h3>
             <p>  Session ID:   {stopData.sessionId} </p>
-            <p>  Start Time:  {stopData.startTime}</p>
-            <p> Stop Time: {stopData.stopTime}</p>
+            <p>Start Date:{new Date(stopData.startTime).toLocaleDateString()}</p>
+            <p> Start Time:{new Date(stopData.startTime).toLocaleTimeString()}</p>
+            <p>Stop Date:{new Date(stopData.stopTime).toLocaleDateString()}</p>
+            <p> Stop Time: {new Date(stopData.stopTime).toLocaleTimeString()} </p>
             <p>  Total Readings: {stopData.totalReadings}</p>
           </div>
         )}
@@ -269,21 +288,26 @@ function App() {
 
         <br /><br />
 
-        <button onClick={getSessionDetails}>
-          Get Details
-        </button>
+        <button onClick={getSessionDetails}>  Get Details </button>
+        {/* Error message box */}
+        {getError && (
+          <div className="error-box">
+            {getError}
+          </div>
+        )}
         {sessionDetails && sessionDetails.session && (
           <div className="result-box">
             <h3>Status Code: {getStatus}</h3>
             <h3>{sessionDetails.message}</h3>
             <p> Session ID:  {sessionDetails.session.sessionId} </p>
             <p> Meter Readings: {sessionDetails.session.meterReadings.join(", ")}  </p>
-            <p> Start Time:  {sessionDetails.session.startTimestamp} </p>
-            <p> Stop Time: {sessionDetails.session.stopTimestamp || "Not Stopped Yet"}</p>
+            <p>Start Date: {new Date(sessionDetails.session.startTimestamp).toLocaleDateString()} </p>
+            <p>Start Time: {new Date(sessionDetails.session.startTimestamp).toLocaleTimeString()} </p>
+            <p> Stop Date:{sessionDetails.session.stopTimestamp ? new Date(sessionDetails.session.stopTimestamp).toLocaleDateString() : "NoStopped Yet"}</p>
+            <p> Stop Time: {sessionDetails.session.stopTimestamp ? new Date(sessionDetails.session.stopTimestamp).toLocaleTimeString() : "NoStopped Yet"}</p>
           </div>
         )}
-      </div>
-    </div>
+      </div></div>
   );
 }
 
