@@ -7,6 +7,8 @@ function App() {
   const [updateStatus, setUpdateStatus] = useState(null);
   const [stopStatus, setStopStatus] = useState(null);
   const [getStatus, setGetStatus] = useState(null);
+  //Error 
+  const [error, setError] = useState("");
   // get data 
   const [startData, setStartData] = useState(null);
   const [updateData, setUpdateData] = useState(null);
@@ -40,6 +42,15 @@ function App() {
       console.log("Status Code:", response.status);
       console.log("Is Success:", response.ok);
       const data = await response.json();
+      if (!response.ok) {
+        setError(data.message);
+        setStartData(null);
+        setUpdateData(null);
+        setStopData(null);
+        setSessionDetails(null);
+        return;
+      }
+      setError("");
       setStartStatus(response.status);
       setStartData(data);
       setSessionId("");
@@ -66,6 +77,15 @@ function App() {
       console.log("Status Code:", response.status);
       console.log("Is Success:", response.ok);
       const data = await response.json();
+      if (!response.ok) {
+        setError(data.message);
+        setStartData(null);
+        setUpdateData(null);
+        setStopData(null);
+        setSessionDetails(null);
+        return;
+      }
+      setError("");
       setUpdateStatus(response.status);
       setUpdateData(data);
       setUpdateSessionId("");
@@ -93,6 +113,15 @@ function App() {
       console.log("Status Code:", response.status);
       console.log("Is Success:", response.ok);
       const data = await response.json();
+      if (!response.ok) {
+        setError(data.message);
+        setStartData(null);
+        setUpdateData(null);
+        setStopData(null);
+        setSessionDetails(null);
+        return;
+      }
+      setError("");
       setStopStatus(response.status);
       setStopData(data);
       setStopSessionId("");
@@ -106,11 +135,20 @@ function App() {
   const getSessionDetails = async () => {
     try {
       const response = await fetch(
-         `${API_URL}/api/session/${searchSessionId}`
+        `${API_URL}/api/session/${searchSessionId}`
       );
       console.log("Status Code:", response.status);
       console.log("Is Success:", response.ok);
       const data = await response.json();
+      if (!response.ok) {
+        setError(data.message);
+        setStartData(null);
+        setUpdateData(null);
+        setStopData(null);
+        setSessionDetails(null);
+        return;
+      }
+      setError("");
       setGetStatus(response.status);
       console.log(data);
       setSessionDetails(data);
@@ -122,7 +160,10 @@ function App() {
   return (
     <div>
       <h1>EV Charging Session Management</h1>
-
+      {/* Error message box */}
+      {error && (
+        <div className="error-box"> {error} </div>
+      )}
       {/*======== start session======== */}
       <div className="section">
         <h2>Start Session</h2>

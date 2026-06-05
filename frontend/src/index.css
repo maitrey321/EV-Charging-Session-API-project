@@ -83,3 +83,11 @@ hr {
 .result-box p {
   margin: 6px 0;
 }
+.error-box {
+  background-color: #ffe5e5;
+  color: red;
+  padding: 10px;
+  margin: 15px 0;
+  border-radius: 5px;
+  font-weight: bold;
+}
